@@ -1,0 +1,19 @@
+.data{
+    margin-left: 30%;
+    width: 40%;
+    margin-top: 40px;
+    /* background-color: violet; */
+}
+
+.data input{
+width: 200px;
+height: 30px;
+margin-left: 20px;
+border-style: none;
+
+}
+
+.data li{
+    font-size: 20px;
+    margin-bottom: 20px;
+}

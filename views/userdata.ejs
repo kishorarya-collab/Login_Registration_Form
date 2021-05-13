@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Userdata</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+</head>
+<body style="padding: 100px;">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Date of Birth</th>
+          </tr>
+        </thead>
+        <tbody>
+            <%data.forEach(dat =>{%>
+                <tr>
+                    <th scope="row"><%= dat.firstname%></th>
+                    <td><%= dat.lastname%></td>
+                    <td><%= dat.email%></td>
+                    <td><%= dat.mobilenumber%></td>
+                    <td><%= dat.dateofbirth%></td>
+                  </tr>
+               <%})%>
+        </tbody>
+      </table>
+</body>
+</html>

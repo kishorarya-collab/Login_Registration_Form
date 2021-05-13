@@ -1,0 +1,13 @@
+.crud{
+    margin-top: 50px;
+    padding: 80px;
+    text-align: center;
+    text-shadow: 2px;
+    color: rgb(19, 19, 20);
+}
+.crud h1{
+    margin-bottom: 50px;
+}
+.crud h3{
+    margin-bottom: 50px;
+}

@@ -1,0 +1,41 @@
+.head{
+    margin-left: 15%;
+    width: 70%;
+    background-color: rgba(92, 81, 247, 0.253);
+    height: 97vh;
+    text-align: center;
+    padding-top: 10px;
+}
+#form{
+    display: flex;
+    flex-direction: column;
+    /* background-color: green; */
+    padding-left: 25%;
+    width: 50%;
+    margin-top: 20px;
+}
+
+input{
+    /* background-color: greenyellow; */
+    float: right;
+    margin-bottom: 20px;
+}
+
+#password{
+    margin-top: 20px;
+}
+#button{
+    background-color: rgba(172, 65, 65, 0.363);
+    cursor: pointer;
+    color: blue;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 2px;
+    width: 70px;
+    align-items: center;
+    margin-left: 225px;
+}
+#button:hover{
+    color: black;
+    background-color: rgba(221, 79, 79, 0.39);
+}

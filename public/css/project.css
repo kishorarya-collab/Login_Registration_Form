@@ -1,0 +1,39 @@
+
+.head{
+    text-align: center;
+    margin-top:  40px;
+    margin-left: 25%;
+    width: 50%;
+    background-color: rgba(92, 81, 247, 0.253);
+    padding: 30px;
+    padding-bottom: 80px;
+}
+#form{
+    /* width: 30%; */
+    align-items: center;
+    /* padding-left: 460px; */
+    padding-top: 25px;
+    padding-bottom: 25px;
+}
+#username{
+    padding: 20px;
+}
+#password{
+    padding-bottom: 15px;
+}
+.register a{
+    text-decoration: none;
+    color: brown;
+}
+#button{
+    background-color: rgba(172, 65, 65, 0.363);
+    cursor: pointer;
+    color: blue;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 2px;
+}
+#button:hover{
+    color: black;
+    background-color: rgba(221, 79, 79, 0.39);
+}
