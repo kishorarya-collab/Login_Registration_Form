@@ -962,11 +962,7 @@ Query.prototype.select = function select() {
   if (utils.isObject(arg)) {
     const keys = Object.keys(arg);
     for (let i = 0; i < keys.length; ++i) {
-      let value = arg[keys[i]];
-      // Workaround for gh-10142
-      if (typeof value === 'string') {
-        value = 1;
-      }
+      const value = arg[keys[i]];
       fields[keys[i]] = value;
       userProvidedFields[keys[i]] = value;
     }
@@ -1038,7 +1034,7 @@ Query.prototype.select = function select() {
  *     // read from secondaries with matching tags
  *     new Query().read('s', [{ dc:'sf', s: 1 },{ dc:'ma', s: 2 }])
  *
- * Read more about how to use read preferrences [here](http://docs.mongodb.org/manual/applications/replication/#read-preference) and [here](http://mongodb.github.com/node-mongodb-native/driver-articles/anintroductionto1_1and2_2.html#read-preferences).
+ * Read more about how to use read preferences [here](http://docs.mongodb.org/manual/applications/replication/#read-preference) and [here](http://mongodb.github.com/node-mongodb-native/driver-articles/anintroductionto1_1and2_2.html#read-preferences).
  *
  * @method read
  * @memberOf Query
@@ -1393,6 +1389,7 @@ Query.prototype.getOptions = function() {
  */
 
 Query.prototype.setOptions = function(options, overwrite) {
+
   // overwrite is only for internal use
   if (overwrite) {
     // ensure that _mongooseOptions & options are two different objects
@@ -1435,6 +1432,11 @@ Query.prototype.setOptions = function(options, overwrite) {
   if ('overwriteDiscriminatorKey' in options) {
     this._mongooseOptions.overwriteDiscriminatorKey = options.overwriteDiscriminatorKey;
     delete options.overwriteDiscriminatorKey;
+  }
+
+  if ('defaults' in options) {
+    this._mongooseOptions.defaults = options.defaults;
+    // deleting options.defaults will cause 7287 to fail
   }
 
   return Query.base.setOptions.call(this, options);
@@ -2265,7 +2267,6 @@ Query.prototype._findOne = wrapThunk(function(callback) {
 
 Query.prototype.findOne = function(conditions, projection, options, callback) {
   this.op = 'findOne';
-
   if (typeof conditions === 'function') {
     callback = conditions;
     conditions = null;
@@ -2305,7 +2306,6 @@ Query.prototype.findOne = function(conditions, projection, options, callback) {
   }
 
   this.exec(callback);
-
   return this;
 };
 
@@ -2950,7 +2950,7 @@ function completeOne(model, doc, res, options, fields, userProvidedFields, pop, 
     return null;
   }
 
-  const casted = helpers.createModel(model, doc, fields, userProvidedFields);
+  const casted = helpers.createModel(model, doc, fields, userProvidedFields, options);
   try {
     casted.init(doc, opts, _init);
   } catch (error) {
@@ -3109,7 +3109,7 @@ Query.prototype.findOneAndUpdate = function(criteria, doc, options, callback) {
 
 
   const returnOriginal = get(this, 'model.base.options.returnOriginal');
-  if (options.returnOriginal == null && returnOriginal != null) {
+  if (options.new == null && options.returnDocument == null && options.returnOriginal == null && returnOriginal != null) {
     options.returnOriginal = returnOriginal;
   }
 
@@ -3435,10 +3435,9 @@ Query.prototype.findOneAndReplace = function(filter, replacement, options, callb
   options = options || {};
 
   const returnOriginal = get(this, 'model.base.options.returnOriginal');
-  if (options.returnOriginal == null && returnOriginal != null) {
+  if (options.new == null && options.returnDocument == null && options.returnOriginal == null && returnOriginal != null) {
     options.returnOriginal = returnOriginal;
   }
-
   this.setOptions(options);
   this.setOptions({ overwrite: true });
 
@@ -3468,7 +3467,7 @@ Query.prototype._findOneAndReplace = wrapThunk(function(callback) {
 
   const filter = this._conditions;
   const options = this._optionsForExec();
-  convertNewToReturnOriginal(options);
+  convertNewToReturnDocument(options);
   let fields = null;
 
   let castedDoc = new this.model(this._update, null, true);
@@ -3510,10 +3509,14 @@ Query.prototype._findOneAndReplace = wrapThunk(function(callback) {
  * compat.
  */
 
-function convertNewToReturnOriginal(options) {
+function convertNewToReturnDocument(options) {
   if ('new' in options) {
-    options.returnOriginal = !options['new'];
+    options.returnDocument = options['new'] ? 'after' : 'before';
     delete options['new'];
+  }
+  if ('returnOriginal' in options) {
+    options.returnDocument = options['returnOriginal'] ? 'before' : 'after';
+    delete options['returnOriginal'];
   }
 }
 
@@ -3669,7 +3672,7 @@ Query.prototype._findAndModify = function(type, callback) {
   if (useFindAndModify === false) {
     // Bypass mquery
     const collection = _this._collection.collection;
-    convertNewToReturnOriginal(opts);
+    convertNewToReturnDocument(opts);
 
     if (type === 'remove') {
       collection.findOneAndDelete(castedQuery, opts, _wrapThunkCallback(_this, function(error, res) {
